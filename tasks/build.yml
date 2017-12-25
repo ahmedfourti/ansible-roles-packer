@@ -1,0 +1,23 @@
+---
+
+- name: Preparing Packer Template...
+  block:
+    - copy:
+        content: "{{ item }}"
+        dest: "{{ temp_path }}/{{ template_name }}"
+      with_template: "ec2_template.yaml"
+
+    - lineinfile:
+        path: "{{ temp_path }}/{{ template_name }}"
+        state: absent
+        regexp: 'line_to_remove'
+
+- name: Validating template...
+  command: packer validate {{ temp_path }}/{{ template_name }}
+  register: validation
+
+- name: Build Instance
+  command: packer build {{ temp_path }}/{{ template_name }}
+  when: validation.rc == 0
+  register: building
+- debug: var=building.stdout_lines

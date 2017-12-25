@@ -1,0 +1,48 @@
+{
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "source_ami_filter": {
+        "filters": {
+          "virtualization-type": "hvm",
+          "name": "{{ source_ami_id }}",
+          "root-device-type": "ebs"
+        },
+        "owners": [
+          "{{ source_ami_owner }}"
+        ],
+        "most_recent": true
+      },
+      "instance_type": "{{ ami_instance_type }}",
+      "region": "{{ aws_region }}",
+      "ssh_username": "{{ ssh_username }}",
+      "ami_name": "{{ ami_name }}"
+      line_to_remove
+    }
+  ],
+  "provisioners": [
+{% if shell_commands is defined %}
+    {
+      "type": "shell",
+      "inline": [
+{% for commands in shell_commands %}
+        "{{ commands }}"{% if not loop.last %},
+{% endif %}
+{% endfor %}
+
+      ]
+    },{% endif %}
+{% if provisioner_roles is defined %}
+    {
+      "type": "ansible-local",
+      "playbook_file": "{{ playbook_file }}",
+      "role_paths": [
+{% for role in provisioner_roles %}
+        "{{ roles_base_dir }}/{{ role }}"{% if not loop.last %},
+{% endif %}
+{% endfor %}
+
+      ]
+    }{% endif %}
+  ]
+}

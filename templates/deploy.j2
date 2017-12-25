@@ -1,0 +1,19 @@
+#!/bin/bash
+
+count=$(docker ps -a | grep "{{ container_name }}" | wc -l)
+
+if [ $count > 0 ]
+  then
+      docker stop {{ container_name }} && docker rm {{ container_name }}
+  else
+      echo "Starting {{ container_name }}..."
+fi
+
+purge=$?
+
+if [ $purge == 0 ]
+  then
+     docker run -d --name {{ container_name }} -p 80:80 mrkt-lex:1
+  else
+     echo "Oops, something went wrong at docker deploy step"
+fi

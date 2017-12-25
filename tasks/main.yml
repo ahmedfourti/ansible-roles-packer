@@ -1,0 +1,8 @@
+---
+# tasks file for packer
+
+- name: Setup Packer
+  include: setup.yml
+
+- name: Build Instance
+  include: build.yml

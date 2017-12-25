@@ -1,0 +1,23 @@
+---
+
+- name: Install unzip
+  package: name=unzip state=present
+
+- name: Check if Packer exists
+  command: packer -v
+  register: packer_exists
+  ignore_errors: yes
+
+- name: Get Packer
+  get_url:
+    url: https://releases.hashicorp.com/packer/{{ packer_version }}/packer_{{ packer_version }}_linux_{{ system_type }}.zip
+    dest: "{{ temp_path }}"
+    checksum: "{{ checksum }}"
+  when: packer_exists != '{{ packer_version }}'
+
+- name: Unarchive Packer
+  unarchive:
+    src: "{{ temp_path }}/packer_{{ packer_version }}_linux_{{ system_type }}.zip"
+    dest: "{{ dest_bin_path }}"
+    remote_src: yes
+  when: packer_exists != '{{ packer_version }}'
