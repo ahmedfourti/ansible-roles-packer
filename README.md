@@ -1,7 +1,7 @@
 Role Name: Packer
 =========
 
-This role is used to provision AWE EC2 instances backed by EBS volumes.  
+This role is used to provision AWS EC2 instances backed by EBS volumes.  
 First it makes sure that Packer is present on the local machine.  
 Then it can provide two provisioning methods: Shell commands and/or Ansible-local.  
 
